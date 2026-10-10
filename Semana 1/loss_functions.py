@@ -13,8 +13,13 @@ def loss_function_MAE(pred, real):
 
 def loss_function_BCE(pred, real):
     return -((real * torch.log(pred)) + (1 - real) * torch.log(1 - pred)).mean()
-
-
+'''
+Adicionei as fórmulas como funções criadas no código,
+porém utilizei também as funções nativas do PyTorch.
+Deixei os números no formato abaixo apenas para
+reaproveitamento em todas as funções,
+já que BCE utiliza probabilidade.
+'''
 pred = torch.tensor([0.05, 0.1, 0.16])
 real = torch.tensor([0.06, 0.12, 0.15])
 
