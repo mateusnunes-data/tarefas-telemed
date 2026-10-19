@@ -14,36 +14,33 @@ def loss_function_MAE(pred, real):
 def loss_function_BCE(pred, real):
     return -((real * torch.log(pred)) + (1 - real) * torch.log(1 - pred)).mean()
 
+mse_loss = nn.MSELoss()
+mae_loss = nn.L1Loss()
+bce_loss = nn.BCELoss()
 
-pred = torch.tensor([0.05, 0.1, 0.16])
-real = torch.tensor([0.06, 0.12, 0.15])
+
+#   Adicionei as fórmulas como funções criadas no código,
+#   porém utilizei também as funções nativas do PyTorch.
+
+
+pred = torch.tensor([2.0, 5.0, 8.0])
+real = torch.tensor([3.0, 4.0, 10.0])
+
+pred_bce = torch.tensor([0.03, 0.9, 0.07])
+real_bce = torch.tensor([0.0, 1.0, 0.0])
 
 #MSE =========================================
 print(loss_function_MSE(pred, real))
-
-mse_loss = torch.nn.MSELoss()
-
 print(mse_loss(pred, real))
 
 #RMSE ========================================
 print(loss_function_RMSE(pred, real))
-
-mse_loss = nn.MSELoss()
-
 print(torch.sqrt(mse_loss(pred, real)))
 
 #MAE =========================================
 print(loss_function_MAE(pred, real))
-
-mae_loss = nn.L1Loss()
-
 print(mae_loss(pred, real))
 
 #BCE =========================================
-print(loss_function_BCE(pred, real))
-
-bce_loss = nn.BCELoss()
-
-print(bce_loss(pred, real))
-
-# ============================================
+print(loss_function_BCE(pred_bce, real_bce))
+print(bce_loss(pred_bce, real_bce))
