@@ -18,17 +18,10 @@ mse_loss = nn.MSELoss()
 mae_loss = nn.L1Loss()
 bce_loss = nn.BCELoss()
 
-<<<<<<< HEAD
-
-#   Adicionei as fórmulas como funções criadas no código,
-#   porém utilizei também as funções nativas do PyTorch.
-
-=======
 '''
 Adicionei as fórmulas como funções criadas no código,
 porém utilizei também as funções nativas do PyTorch.
 '''
->>>>>>> c9e3b3eb24035693734f879d55fb00463ac18184
 
 pred = torch.tensor([2.0, 5.0, 8.0])
 real = torch.tensor([3.0, 4.0, 10.0])
@@ -50,8 +43,4 @@ print(mae_loss(pred, real))
 
 #BCE =========================================
 print(loss_function_BCE(pred_bce, real_bce))
-<<<<<<< HEAD
 print(bce_loss(pred_bce, real_bce))
-=======
-print(bce_loss(pred_bce, real_bce))
->>>>>>> c9e3b3eb24035693734f879d55fb00463ac18184
