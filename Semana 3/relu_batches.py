@@ -23,18 +23,19 @@ print(relu(tensor_teste))
 def mse_batch(pred, real):
     erro = (real - pred) ** 2
 
-    # dim = -1: última dimensão. A função em teoria já tinha suporte à batches, mas fiz desta forma para mostrar o que a atividade pedia
+    # dim = -1: última dimensão. Média sobre as saídas de cada amostra, que gera uma loss por amostra
     loss_por_amostra = erro.mean(dim = -1)
 
+    # A função original que continha apenas um .mean() já tinha suporte a batches, nesta apenas mostro como é feito
     return loss_por_amostra.mean()
 
 
 
-tensor_teste = torch.tensor([2.0, 5.0, 8.0, -1.0])
-pred = torch.tensor([2.0, 5.0, 8.0])
-real = torch.tensor([3.0, 4.0, 10.0])
+batch_relu = torch.tensor([[ 1.0,    6.0, 7.0, -2.0], [-2.0,    0.0, 5.0, -3.0]])
+pred = torch.tensor([[2.0, 5.0, 8.0], [1.0, 4.0, 7.0]])
+real = torch.tensor([[3.0, 4.0, 10.0], [1.5, 3.0, 9.0]])
 
 
 
-print(relu(tensor_teste))
+print(relu(batch_relu))
 print(mse_batch(pred, real))
