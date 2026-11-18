@@ -17,11 +17,11 @@ from torch.utils.data import TensorDataset, DataLoader
 [X] A saída da rede será o preço da casa. Para obter o valor real, reverta o z-score e depois o ln.
 [X] Treine o modelo usando a função de perda MSE e o otimizador Adam.
 [X] Treine a rede somente com os dados de treino e avalie-a somente com os dados de teste.
-[ ] Faça os testes e ajustes que julgar necessários para melhorar os resultados e experimentar.
+[X] Faça os testes e ajustes que julgar necessários para melhorar os resultados e experimentar.
 [X] Valide os resultados calculando métricas no conjunto de teste: RMSE, MAE e R²
 '''
 
-df = pd.read_csv('Semana 4/dados/train.csv')
+df = pd.read_csv('tarefas-telemed/Semana 4/dados/train.csv')
 df = df.drop(columns=['Utilities', 'Street', 'Condition2', 'RoofMatl', 'Heating', 'PoolQC', 'Exterior1st', 'SaleType'])
 
 # Separação dos dois datasets, treino e teste
@@ -46,7 +46,7 @@ mapeamentos.update({
     'GarageFinish':     {"None": 0, "Unf": 1, "RFn": 2, "Fin": 3},
     'PavedDrive':       {"N": 0, "P": 1, "Y": 2},
     'LotShape':         {"IR3": 0, "IR2": 1, "IR1": 2, "Reg": 3},
-    'LandSlope':        {"Gtl": 0, "Mod": 1, "Sev": 2},
+    'LandSlope':        {"Sev": 0, "Mod": 1, "Gtl": 2},
     'Functional':       {"Sal": 0, "Sev": 1, "Maj2": 2, "Maj1": 3, "Mod": 4, "Min2": 5, "Min1": 6, "Typ": 7},
     'CentralAir':       {"N": 0, "Y": 1},
 })
@@ -111,9 +111,10 @@ entradas = X_treino_t.shape[1]
 class RedeNeural(nn.Module):
     def __init__(self, entradas):
         super().__init__()
-        self.camada_1 = nn.Linear(entradas, 128)
-        self.camada_2 = nn.Linear(128, 64)
-        self.saida = nn.Linear(64, 1)
+        self.camada_1 = nn.Linear(entradas, 64)
+        self.drop = nn.Dropout(0.3)
+        self.camada_2 = nn.Linear(64, 32)
+        self.saida = nn.Linear(32, 1)
 
     def forward(self, output):
         output = torch.relu(self.camada_1(output))
@@ -125,7 +126,8 @@ class RedeNeural(nn.Module):
 dataset_treino = TensorDataset(X_treino_t, y_treino_t)
 loader_treino = DataLoader(dataset_treino, batch_size=64, shuffle=True)
 
-# Modelo, perda e otimizador
+# Seed, modelo, perda e otimizador
+torch.manual_seed(42)
 modelo = RedeNeural(entradas)
 criterio = nn.MSELoss()
 otimizador = torch.optim.Adam(modelo.parameters(), lr=0.001)
@@ -191,3 +193,17 @@ r2 = 1 - np.sum(erro ** 2) / np.sum((preco_real - preco_real.mean()) ** 2)
 print(f"\nRMSE: {rmse:,.2f}")
 print(f"MAE:  {mae:,.2f}")
 print(f"R²:   {r2:.4f}")
+print(f'Seed utilizada: {torch.initial_seed()}')
+
+resultados = []
+for seed in range(5):
+    torch.manual_seed(seed)
+    modelo = RedeNeural(entradas)
+    # Treina e calcula as métricas
+    resultados.append(rmse)
+print(f"RMSE: {np.mean(resultados):,.0f} ± {np.std(resultados):,.0f}")
+
+# Removendo outliers
+outliers = (df_treino['GrLivArea'] > 4000) & (df_treino['SalePrice'] < 300000)
+df_treino = df_treino[~outliers]
+
